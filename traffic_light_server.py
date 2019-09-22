@@ -7,6 +7,11 @@ red = LED(14)
 yellow = LED(15)
 green = LED(18)
 
+state = 'UNKNOWN'
+red.on()
+yellow.on()
+green.on()
+
 # Create TCP Socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -33,28 +38,36 @@ while True:
 				break
 
 			if data == 'GREEN':
-				print('Green')
+				if state == 'GREEN':
+					break
+
+				state = 'GREEN'
+				
+				yellow.on()
+				sleep(1)
+				
+				red.off()
+				yellow.off()
+				green.on()
+			
 			elif data == 'RED':
-				print('Red')
+				if state == 'RED':
+					break
+
+				state = 'RED'
+
+				green.off()
+				yellow.on()
+				sleep(1)
+
+				yellow.off()
+				red.on()
 			else:
 				print('Unknown Command')
+				state = 'ERROR'
+				green.on()
+				yellow.on()
+				red.on()
+
 	finally:
 		connection.close()
-
-while True:
-	red.on()
-	sleep(5)
-
-	yellow.on()
-	sleep(1)
-
-	red.off()
-	yellow.off()
-	green.on()
-	sleep(5)
-
-	green.off()
-	yellow.on()
-	sleep(1)
-
-	yellow.off()
